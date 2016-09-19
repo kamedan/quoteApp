@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Quote extends Model
 {
-    public function offer()
+    public function author()
     {
-        return $this->belongsTo('App\Quote');
+        return $this->belongsTo('App\Author');
     }
 }

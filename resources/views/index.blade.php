@@ -9,35 +9,62 @@
 @endsection
 
 @section('content')
+    @if(!empty(Request::segment(1)))
+        <section class="filter-bar"> A filter has benn set <a href="{{route('index')}}">Show All quotes</a></section>
+    @endif
 
+    @if(count($errors) > 0)
+        <section class="info-box fail">
+            @foreach($errors->all() as $error)
+                    {{$error}}
+            @endforeach
+
+        </section>
+    @endif
+
+    @if(Session::has('success'))
+        <section class="info-box success">
+            {{Session::get('success')}}
+
+        </section>
+    @endif
     <section class="quotes">
         <h1>Latest Quotes</h1>
-        <article class="quote">
-            <div><a class="delete" href="#">X</a></div>
-            <div>Quote text</div>
-            <div class="info"> Created by <a href="#">Amine</a> on ..</div>
-        </article>
+        @for($i=0; $i < count($quotes) ; $i++)
+            <article class="quote">
+                <div><a class="delete" href="{{ route('delete', ['quote_id' => $quotes[$i]->id]) }}">X</a></div>
+                <div>{{$quotes[$i]->quote}}</div>
+                <div class="info"> Created by <a href="{{route('index', ['author' => $quotes[$i]->author->name ])}}"> {{$quotes[$i]->author->name}}</a> on {{$quotes[$i]->created_at}}</div>
+            </article>
+        @endfor
+
+        <div class="pagination">
+            @if($quotes->currentPage() !== 1)
+                <a href="{{$quotes->previousPageUrl()}}"><span class="fa fa-caret-left"></span></a>
+            @endif
+            @if($quotes->currentPage() !== $quotes->lastPage() && $quotes->hasPages())
+                    <a href="{{$quotes->nextPageUrl()}}"><span class="fa fa-caret-right"></span></a>
+            @endif
+</div>
 
 
+</section>
 
-        Pagination
-    </section>
+<section class="edit-quote">
+<h1> Add Quote</h1>
 
-    <section class="edit-quote">
-        <h1> Add Quote</h1>
+<form method="post" action="{{route(('create'))}}" >
+    <div class="input-group">
+        <label for="">Your name</label>
+        <input type="text" name="author" id="author" placeholder="Your name">
+    </div>
 
-        <form action="">
-            <div class="input-group">
-                <label for="">Your name</label>
-                <input type="text" name="author" id="author" placeholder="Your name">
-            </div>
-
-            <div class="input-group">
-                <label for="">Your Quote</label>
-                <textarea id="quote" name="quote" cols="30" rows="10" placeholder="Your quote"></textarea>
-            </div>
-            <button type="submit" class="btn">Submit Quote</button>
-            <input type="hidden" name="_token" value="{{Session::token()}}">
-        </form>
-    </section>
+    <div class="input-group">
+        <label for="">Your Quote</label>
+        <textarea id="quote" name="quote" cols="30" rows="10" placeholder="Your quote"></textarea>
+    </div>
+    <button type="submit" class="btn">Submit Quote</button>
+    <input type="hidden" name="_token" value="{{Session::token()}}">
+</form>
+</section>
 @endsection
