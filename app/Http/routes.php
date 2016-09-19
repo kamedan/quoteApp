@@ -11,7 +11,7 @@
 |
 */
 
-Route::group(['middelware' => ['web']], function(){
+Route::group(['middleware' => ['web']], function(){
 
     Route::get('/{author?}', [
         'uses' => 'QuoteController@getIndex',
@@ -32,6 +32,32 @@ Route::group(['middelware' => ['web']], function(){
         'uses' => 'QuoteController@getMailCallback',
         'as' => 'mail_callback'
     ]);
+
+    Route::get('/admin/login', [
+        'uses' => 'AdminController@getLogin',
+        'as' => 'admin.login'
+    ]);
+
+    Route::post('/admin/login', [
+        'uses' => 'AdminController@postLogin',
+        'as' => 'admin.login'
+    ]);
+
+    Route::group(['middleware' => ['auth']], function(){
+
+
+    Route::get('/admin/dashboard', [
+        'uses' => 'AdminController@getDashboard',
+        'as' => 'admin.dashboard'
+    ]);
+
+    });
+
+    Route::get('/admin/logout', [
+        'uses' => 'AdminController@getLogout',
+        'as' => 'admin.logout'
+    ]);
+
 
 });
 
