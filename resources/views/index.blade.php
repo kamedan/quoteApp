@@ -55,12 +55,17 @@
 
 <form method="post" action="{{route(('create'))}}" >
     <div class="input-group">
-        <label for="">Your name</label>
+        <label for="author">Your name</label>
         <input type="text" name="author" id="author" placeholder="Your name">
     </div>
 
     <div class="input-group">
-        <label for="">Your Quote</label>
+        <label for="email">Your Email</label>
+        <input type="text" name="email" id="email" placeholder="Your Email">
+    </div>
+
+    <div class="input-group">
+        <label for="quote">Your Quote</label>
         <textarea id="quote" name="quote" cols="30" rows="10" placeholder="Your quote"></textarea>
     </div>
     <button type="submit" class="btn">Submit Quote</button>

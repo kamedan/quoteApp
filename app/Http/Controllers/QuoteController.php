@@ -9,8 +9,11 @@
 namespace App\Http\Controllers;
 
 use App\Author;
+use App\Events\QuoteCreated;
 use App\Quote;
+use App\AuthorLog;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Event;
 
 
 class QuoteController extends Controller
@@ -37,7 +40,8 @@ class QuoteController extends Controller
     {
         $this->validate($request, [
             'author' => 'required|max:60|alpha',
-            'quote'=>'required|max:500'
+            'quote'=>'required|max:500',
+            'email' => 'required|email|'
         ]);
         $authorText = ucfirst($request['author']);
         $quoteText = $request['quote'];
@@ -47,12 +51,15 @@ class QuoteController extends Controller
         {
             $author = new Author();
             $author->name = $authorText;
+            $author->email = $request['email'];
             $author->save();
         }
 
         $quote = new Quote();
         $quote->quote = $quoteText;
         $author->quotes()->save($quote);
+
+        Event::fire(new QuoteCreated($author));
 
         return redirect()->route('index')->with([
             'success' => 'Quote saved'
@@ -75,6 +82,14 @@ class QuoteController extends Controller
             'success' => $msg
 
         ]);
+    }
+
+    public function getMailCallback($author_name)
+    {
+        $author_log = new AuthorLog();
+        $author_log->name = $author_name;
+        $author_log->save();
+        return view('email.callback', ['author' => $author_name]);
     }
 
 }
